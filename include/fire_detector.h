@@ -10,9 +10,15 @@ class fire_detector{
 
         ros::NodeHandle nh_;
         ros::Subscriber cam_sub_;
+        ros::Subscriber detect_sub_;
+
+        ros::Publisher img_pub_;
 
         void   
         cameraCallback(const sensor_msgs::Image& msg);
+
+        void   
+        detectionCallback(const sensor_msgs::Image& msg);
 
 };
 
