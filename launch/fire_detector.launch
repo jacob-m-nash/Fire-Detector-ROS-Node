@@ -1,0 +1,7 @@
+<launch>
+<node pkg="fire_detector"
+        name="fire_detector"
+        type="fire_detector"
+        output="screen"
+  />
+</launch>
