@@ -14,12 +14,9 @@ class fire_detector{
 
         ros::Publisher img_pub_;
 
-        void   
-        cameraCallback(const sensor_msgs::Image& msg);
+        void cameraCallback(const sensor_msgs::Image::ConstPtr &msg);
 
-        void   
-        detectionCallback(const sensor_msgs::Image& msg);
-
+        void detectionCallback(const sensor_msgs::Image::ConstPtr &msg);
 };
 
 #endif

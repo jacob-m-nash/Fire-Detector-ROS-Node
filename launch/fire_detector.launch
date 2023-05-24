@@ -1,7 +1,14 @@
 <launch>
 <node pkg="fire_detector"
-        name="fire_detector"
-        type="fire_detector"
+        name="fire_detector_node"
+        type="fire_detector_node"
         output="screen"
   />
+<node pkg="usb_cam" 
+      name="usb_cam" 
+      type="usb_cam_node" 
+      output="screen" 
+   />
+
+<include file="$(find darknet_ros)/launch/darknet_ros.launch"/>
 </launch>
