@@ -79,7 +79,6 @@ git clone --recursive https://github.com/leggedrobotics/darknet_ros.git
 ```
 catkin build darknet_ros -DCMAKE_BUILD_TYPE=Release
 ```
-### TODO: Download and move example yolo model weights
 ### Download Other Dependencies
 usb-cam (for testing)
 ```bash
@@ -89,7 +88,10 @@ sudo apt install ros-noetic-usb-cam
 ```
 catkin build
 ```
-### TODO: Download and move fire-detector model weights
+### TODO: Download fire-detector model weights
+
+### TODO: Convert pytouch weights to Darknet weights
+https://github.com/ultralytics/yolov3/tree/archive#darknet-conversion 
 ## Launch
 ```ROS
 roslaunch fire_detector fire_detector.launch 
