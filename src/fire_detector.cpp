@@ -14,7 +14,6 @@ fire_detector::fire_detector(ros::NodeHandle nh){
 
 void fire_detector::cameraCallback(const sensor_msgs::Image::ConstPtr& msg)
 {
-  ROS_INFO("Received image with size: %i x %i", msg->width, msg->height);
   img_pub_.publish(msg);
 }
 

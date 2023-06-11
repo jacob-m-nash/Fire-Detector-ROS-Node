@@ -13,12 +13,14 @@
 
     <node pkg="yolov7_ros" type="detect_ros.py" name="detect" output="screen"
     ns="yolov7">
-        <!-- Download the official weights from the original repo -->
+        <!-- path to tourch weights file -->
+        <!-- TODO: relative path -->
         <param name="weights_path" type="str"
-        value="/home/jacob/catkin_workspace/src/yolov7-ros/weights/yolov7.pt"/>
+        value="/home/jacob/catkin_workspace/src/Fire-Detector-ROS-Node/weights/Fire-Detector-yolov7.pt"/>
       
-        <!-- Path to a class_labels.txt file containing your desired class labels. The i-th entry corresponds to the i-th class id. For example, in coco class label 0 corresponds to 'person'. Files for the coco and berkeley deep drive datasets are provided in the 'class_labels/' directory. If you leave it empty then no class labels are visualized.-->
-        <param name="classes_path" type="str" value="/home/jacob/catkin_workspace/src/yolov7-ros/class_labels/coco.txt" />
+        <!-- Path to a class labels file -->
+        <!-- TODO: relative path -->
+        <param name="classes_path" type="str" value="/home/jacob/catkin_workspace/src/yolov7-ros/class_labels/fire-detector.txt" />
         <!-- topic name to subscribe to -->
         <param name="img_topic" type="str" value="/camera/rgb/image_raw" />
         <!-- topic name for the detection output -->
