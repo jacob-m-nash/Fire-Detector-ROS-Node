@@ -10,7 +10,7 @@ int main(int argc, char **argv){
   fire_detector fire_detector(nh);
 
   // loop rate in Hz
-  ros::Rate rate(10);
+  ros::Rate rate(60);
 
   while (ros::ok()) {
 

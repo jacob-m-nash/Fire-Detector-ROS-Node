@@ -1,6 +1,10 @@
 # Fire-Detector-ROS-Node
  Ros node implantation of Fire-Detector
 ## Setup (Ubuntu 20.04)
+### Install pip
+```bash 
+sudo apt install python3-pip
+```
 ### Install ROS Noetic
 Taken from [here](http://wiki.ros.org/noetic/Installation/Ubuntu) (date accessed 23/05/2023)
 
@@ -28,56 +32,35 @@ echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
 ```
 source ~/.bashrc
 ```
-### Build OpenCV
-Taken from [here](https://docs.opencv.org/4.x/d7/d9f/tutorial_linux_install.html) (date accessed 23/05/2023)
-#### Install minimal prerequisites
+## Install yolov7-ros
+### Download source from github
+```bash
+git clone https://github.com/jacob-m-nash/yolov7-ros.git ~/catkin_workspace/src/
 ```
-sudo apt update && sudo apt install -y cmake g++ wget unzip
+### Install requirements
+```bash
+pip install -r ~/catkin_workspace/src/yolov7-ros/requirements.txt
 ```
-#### Create folder for source code
-```
-mkdir -p OpenCV && cd OpenCV 
-```
-#### Download and unpack sources
-```
-wget -O opencv.zip https://github.com/opencv/opencv/archive/4.x.zip
-```
-```
-unzip opencv.zip
-```
-```
-mkdir -p build && cd build
-```
-#### Configure
-```
-cmake  ../opencv-4.x
-```
-#### Build 
-```
-cmake --build .
-```
-### Install Boost
-Taken from [here](https://www.boost.org/doc/libs/1_82_0/more/getting_started/unix-variants.html) (date accessed 23/05/2023)
-#### Download Boost
-```
-wget https://boostorg.jfrog.io/artifactory/main/release/1.82.0/source/boost_1_82_0.tar.bz2
-```
-#### Extract and Execute
-```
-tar --bzip2 -xf boost_1_82_0.tar.bz2
+```bash
+sudo apt install ros-noetic-vision-msgs
 ``` 
-### Download and build darkent_ros
-Taken from [here](https://github.com/leggedrobotics/darknet_ros/blob/master/README.md) (date accessed 23/05/2023)
-#### Download source code
+```bash
+sudo apt install ros-noetic-geometry-msgs
+
 ```
-cd catkin_workspace/src
+### Download test weights (TODO: Use fire detector training weights)
+```bash
+wget https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7.pt -O /path/to/dir/yolo7.pt
 ```
+```bash
+wget https://github.com/amikelive/coco-labels/blob/master/coco-labels-2014_2017.txt -O /path/to/dir/coco.txt
 ```
-git clone --recursive https://github.com/leggedrobotics/darknet_ros.git
+### Test build
+```bash
+cd ~/catkin_workspace
 ```
-#### Build
-```
-catkin build darknet_ros -DCMAKE_BUILD_TYPE=Release
+```bash
+catkin build yolov7_ros
 ```
 ### Download Other Dependencies
 usb-cam (for testing)
@@ -88,10 +71,8 @@ sudo apt install ros-noetic-usb-cam
 ```
 catkin build
 ```
-### TODO: Download fire-detector model weights
 
-### TODO: Convert pytouch weights to Darknet weights
-https://github.com/ultralytics/yolov3/tree/archive#darknet-conversion 
+
 ## Launch
 ```ROS
 roslaunch fire_detector fire_detector.launch 
