@@ -21,6 +21,8 @@ class fire_detector{
         void cameraCallback(const sensor_msgs::Image::ConstPtr &msg);
 
         void detectionCallback(const sensor_msgs::Image::ConstPtr &msg);
+
+        float calculateFrequency(std::chrono::steady_clock::time_point previous_time, std::chrono::steady_clock::time_point current_time);
         
 };
 
