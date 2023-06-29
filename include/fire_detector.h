@@ -5,6 +5,9 @@
 #include <sensor_msgs/Image.h>
 #include <ctime>
 #include <chrono>
+#include <rosbag/bag.h>
+ #include <rosbag/view.h>
+ #include <boost/foreach.hpp>
 
 class fire_detector{
     public:
@@ -16,6 +19,7 @@ class fire_detector{
         std::chrono::steady_clock::time_point current_time_;
         std::chrono::steady_clock::time_point last_time_;
         ros::Publisher img_pub_;
+        ros::Publisher bag_pub_;
 
 
         void cameraCallback(const sensor_msgs::Image::ConstPtr &msg);
@@ -23,6 +27,8 @@ class fire_detector{
         void detectionCallback(const sensor_msgs::Image::ConstPtr &msg);
 
         float calculateFrequency(std::chrono::steady_clock::time_point previous_time, std::chrono::steady_clock::time_point current_time);
+
+        void openBag(std::string filePath);
         
 };
 

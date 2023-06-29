@@ -11,10 +11,11 @@ find_package(catkin REQUIRED COMPONENTS
  roscpp
  std_msgs
  geometry_msgs
+ rosbag
 )
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+find_package(Boost REQUIRED COMPONENTS system)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -107,6 +108,8 @@ catkin_package(
 #  LIBRARIES fire_detector
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
+  CATKIN_DEPENDS
+    rosbag
 )
 
 ###########
@@ -118,6 +121,7 @@ catkin_package(
 include_directories(
  include
  ${catkin_INCLUDE_DIRS}
+ ${Boost_LIBRARIES}
 )
 
 #Declare a C++ library
@@ -149,6 +153,8 @@ add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catk
 target_link_libraries(${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
   ${PROJECT_NAME}_fd_class_lib
+  ${rosbag_LIBRARIES}
+
 )
 
 #############
