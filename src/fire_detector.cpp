@@ -3,12 +3,14 @@
 #include <rosbag/view.h>
 #include <stdlib.h>
 #include <boost/foreach.hpp>
+#include <rosbag/bag_player.h>
 
 fire_detector::fire_detector(ros::NodeHandle nh){
     nh_ = nh;
     // Initialise ROS Subscribers
     cam_sub_ = nh_.subscribe("/usb_cam/image_raw",1,&fire_detector::cameraCallback, this);
     detect_sub_ = nh_.subscribe("/yolov7/yolov7/visualization",1,&fire_detector::detectionCallback,this);
+    yolo_state_sub_ = nh_.subscribe("/yolov7/yolov7/status",1,&fire_detector::yolo_status_callback, this);
 
     // Define the publishers
     img_pub_ = nh_.advertise<sensor_msgs::Image>("/camera/rgb/image_raw", 1, true);
@@ -17,10 +19,6 @@ fire_detector::fire_detector(ros::NodeHandle nh){
 
     last_time_ = std::chrono::steady_clock::now();
     current_time_ = std::chrono::steady_clock::now();
-
-    std::string bag_path;
-    nh_.getParam("/fire_detector_node/bag_path", bag_path);
-    //openBag(bag_path);
 }
 
 void fire_detector::cameraCallback(const sensor_msgs::Image::ConstPtr& msg)
@@ -35,7 +33,17 @@ void fire_detector::detectionCallback(const sensor_msgs::Image::ConstPtr &msg){
     ROS_INFO("htz %f", htz);
     last_time_ = std::chrono::steady_clock::now();
     return;
+}
 
+void fire_detector::yolo_status_callback(const std_msgs::String::ConstPtr &msg){
+    std::string status = msg->data.c_str();
+    ROS_INFO("callback");
+    if(status == "ready"){
+        ROS_INFO("ready");
+        std::string bag_path;
+        nh_.getParam("/fire_detector_node/bag_path", bag_path);
+        openBag(bag_path);
+    }
 }
 
 float fire_detector::calculateFrequency(std::chrono::steady_clock::time_point previous_time, std::chrono::steady_clock::time_point current_time)
@@ -47,22 +55,20 @@ float fire_detector::calculateFrequency(std::chrono::steady_clock::time_point pr
 }
 
 void fire_detector::openBag(std::string filePath){
-    rosbag::Bag bag;
-    bag.open(filePath);
+    rosbag::Bag bag (filePath);
     rosbag::View view(bag,rosbag::TopicQuery("/device_0/sensor_1/Color_0/image/data"));
-    ros::Time bag_begin_time = view.getBeginTime();
-    ros::Time bag_end_time = view.getEndTime();
-    double len = (bag_end_time-bag_begin_time).toSec();
-    ROS_INFO("bag length: %f",len);
-    sleep(10);
+    ros::Time prev_time = view.getBeginTime();
     ROS_INFO("starting reading messages");
-    int count = 0;
     BOOST_FOREACH(rosbag::MessageInstance const m, view){
+        ros::Time message_time =  m.getTime();
+        (message_time - prev_time).sleep();
         sensor_msgs::Image::ConstPtr i = m.instantiate<sensor_msgs::Image>();
         if (i != nullptr){
             bag_pub_.publish(m);
-            count ++;
         }
+        prev_time = message_time;
     }
-    ROS_INFO("number of msg %i", count);
+
 }
+
+

@@ -11,9 +11,9 @@
       
         <!-- Path to a class labels file -->
         <!-- TODO: relative path -->
-        <param name="classes_path" type="str" value="$(find fire_detector)/class_labels/coco.txt" />
+        <param name="classes_path" type="str" value="$(find fire_detector)/class_labels/fire-detector.txt" />
         <!-- topic name to subscribe to -->
-        <param name="img_topic" type="str" value="/device_0/sensor_1/Color_0/image/data" />
+        <param name="img_topic" type="str" value="/video/image" />
         <!-- topic name for the detection output -->
         <param name="out_topic" type="str" value="yolov7" />
         <!-- confidence threshold -->
