@@ -37,9 +37,7 @@ void fire_detector::detectionCallback(const sensor_msgs::Image::ConstPtr &msg){
 
 void fire_detector::yolo_status_callback(const std_msgs::String::ConstPtr &msg){
     std::string status = msg->data.c_str();
-    ROS_INFO("callback");
     if(status == "ready"){
-        ROS_INFO("ready");
         std::string bag_path;
         nh_.getParam("/fire_detector_node/bag_path", bag_path);
         openBag(bag_path);
