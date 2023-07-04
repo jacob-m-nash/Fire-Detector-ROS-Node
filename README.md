@@ -77,3 +77,10 @@ catkin build
 ```ROS
 roslaunch fire_detector fire_detector.launch 
 ```
+
+## Running Video Web Server
+taken from [here] (https://github.com/Intelligent-Quads/iq_tutorials/blob/master/docs/web_video_server.md )
+
+```ROS
+rosrun web_video_server web_video_server
+```
