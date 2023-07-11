@@ -1,6 +1,0 @@
-[submodule "simulation/spot/description/spot_gazebo_description"]
-	path = simulation/spot/description/spot_gazebo_description
-	url = https://github.com/jacob-m-nash/spot_gazebo_description.git
-[submodule "simulation/spot/config/spot_config"]
-	path = simulation/spot/config/spot_config
-	url = https://github.com/jacob-m-nash/spot_config.git
