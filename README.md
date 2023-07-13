@@ -77,3 +77,47 @@ catkin build
 ```ROS
 roslaunch fire_detector fire_detector.launch 
 ```
+
+## Simulation
+
+
+## Download CHAMP
+```bash
+cd ~/catkin_workspace/src
+```
+```bash
+git clone https://github.com/chvmp/champ.git
+```
+
+### C++ version fix
+CHAMP may not build first time. To fix edit:
+```
+ /catkin_workspace/src/champ/champ_gazebo/CMakeLists.txt
+ ```
+ and change the line 
+ ```
+ add_compile_options(-std=c++11)
+ ```
+ to 
+ ```
+ add_compile_options(-std=c++17)
+ ```
+
+## Download CHAMP Zoo
+
+```bash
+cd ~/catkin_workspace/src
+```
+```bash
+git clone https://github.com/chvmp/robots.git
+```
+### Download URDF files
+ ```bash
+cd ~/catkin_workspace/src/src/robots
+```
+```bash
+./install_descriptions
+```
+TODO write own launch file src/robots/configs/spot_config/launch/gazebo.launch
+roslaunch spot_config gazebo.launch 
+roslaunch champ_teleop teleop.launch
