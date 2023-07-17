@@ -92,7 +92,7 @@ git clone https://github.com/chvmp/champ.git
 ### C++ version fix
 CHAMP may not build first time. To fix edit:
 ```
- /catkin_workspace/src/champ/champ_gazebo/CMakeLists.txt
+ champ/champ_gazebo/CMakeLists.txt
  ```
  and change the line 
  ```
@@ -103,7 +103,7 @@ CHAMP may not build first time. To fix edit:
  add_compile_options(-std=c++17)
  ```
 
-## Download CHAMP Zoo
+## Download Spot Description
 
 ```bash
 cd ~/catkin_workspace/src
@@ -118,6 +118,15 @@ cd ~/catkin_workspace/src/src/robots
 ```bash
 ./install_descriptions
 ```
-TODO write own launch file src/robots/configs/spot_config/launch/gazebo.launch
+
+## Launch
+### Launch gazebo simulation
+```bash
 roslaunch spot_config gazebo.launch 
+```
+
+### Launch robot teleop
+```bash
 roslaunch champ_teleop teleop.launch
+```
+TODO: nested packages dont work. Need to fix 
