@@ -11,6 +11,10 @@ find_package(catkin REQUIRED COMPONENTS
  roscpp
  std_msgs
  geometry_msgs
+rosbag
+ actionlib_msgs
+ actionlib
+
 )
 
 ## System dependencies are found with CMake's conventions
@@ -107,6 +111,8 @@ catkin_package(
 #  LIBRARIES fire_detector
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
+  CATKIN_DEPENDS
+    rosbag
 )
 
 ###########
@@ -118,11 +124,13 @@ catkin_package(
 include_directories(
  include
  ${catkin_INCLUDE_DIRS}
+ ${Boost_LIBRARIES}
 )
 
 #Declare a C++ library
 add_library(${PROJECT_NAME}_fd_class_lib
  src/fire_detector.cpp
+ src/fire_detector_nav.cpp
 )
 
 ## Add cmake target dependencies of the library
@@ -149,6 +157,8 @@ add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catk
 target_link_libraries(${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
   ${PROJECT_NAME}_fd_class_lib
+  ${rosbag_LIBRARIES}
+
 )
 
 #############
