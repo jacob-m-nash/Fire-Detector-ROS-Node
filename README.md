@@ -84,3 +84,67 @@ taken from [here] (https://github.com/Intelligent-Quads/iq_tutorials/blob/master
 ```ROS
 rosrun web_video_server web_video_server
 ```
+
+## Running on Boston Dynamics Spot
+### Install ROS Noetic
+Taken from [here](http://wiki.ros.org/noetic/Installation/Ubuntu) (date accessed 23/05/2023)
+
+#### Setup your sources.list
+```
+sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+```
+```
+sudo apt install curl # if you haven't already installed curl
+```
+```
+curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
+```
+#### Installation
+```
+sudo apt update # make sure your Debian package index is up-to-date
+```
+```
+sudo apt install ros-noetic-desktop-full
+```
+#### Environment setup
+```
+echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
+```
+```
+source ~/.bashrc
+```
+### Download packages
+spot_ros
+
+Fire-Detector-ROS-Node
+
+yolov7_ros
+
+### SSH into spot core
+```bash
+ssh spotcore@192.168.1.22
+```
+### Launch spot driver on spot core
+```bash
+roslaunch spot_driver driver.launch
+```
+
+### Launch spot viz on operator pc
+```bash
+source catkin_ws/src/Fire-Detector-ROS-Node/scripts/connect_spot_master.sh
+```
+```bash
+roslaunch spot_viz view_robot.launch
+```
+### Connecting using spot viz
+1. Claim Lease
+2. Power On
+3. Stand
+
+### Controlling using keyboard
+```bash
+source catkin_ws/src/Fire-Detector-ROS-Node/scripts/connect_spot_master.sh
+```
+```bash
+rosrun teleop_twist_keyboard teleop_twist_keyboard.py
+```
