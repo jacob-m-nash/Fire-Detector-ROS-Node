@@ -33,8 +33,32 @@
         <!-- flag whether to also publish image with the visualized detections -->
         <param name="visualize" type="bool" value="true" />
         <!-- 'cuda' or 'cpu' -->
-        <param name="device" type="str" value="cuda" />
+        <param name="device" type="str" value="cpu" />
     </node>
 
     <include file="$(find realsense2_camera)/launch/rs_camera.launch" />
+
+    arg name="robot_name" default="/"/>
+    <arg name="rviz"       default="false"/>
+
+    <arg if="$(eval arg('robot_name') == '/')"  name="frame_prefix" value="" />
+    <arg unless="$(eval arg('robot_name') == '/')" name="frame_prefix" value="$(arg robot_name)/" />
+
+    <!-- TODO: do we need group -->
+    <group ns="$(arg robot_name)">
+        <!-- Map server -->
+        <arg name="map_file" default="$(find fire_detector)/maps/RPL_lab_test.yaml"/>
+        <!--<arg name="map_file" default="$(find fire_detector)/maps/map.yaml"/> -->
+        <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)" >
+            <param name="frame_id" value="$(arg frame_prefix)map" />
+        </node>
+    
+        <!-- Calls navigation stack -->
+        <include file="$(find fire_detector)/launch/include/move_base.launch">
+            <arg name="frame_prefix" value="$(arg frame_prefix)"/>
+            <arg name="robot_name"   value="$(arg robot_name)"/>
+        </include>
+
+    </group>
+
 </launch>
