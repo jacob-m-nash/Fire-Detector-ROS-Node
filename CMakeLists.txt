@@ -14,7 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
 rosbag
  actionlib_msgs
  actionlib
- darknet_ros_msgs
+ detection_msgs
 
 )
 

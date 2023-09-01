@@ -13,32 +13,36 @@
         <arg name="data" value="$(find fire_detector)/class_lables/fire-detector.yaml"/>
         <arg name="publish_image" value="true"/>
         <arg name="input_image_topic" value="/camera/color/image_raw"/>
+        <arg name="input_depth_topic" value="/camera/aligned_depth_to_color/image_raw"/>
         <arg name="device" value="cpu"/>
         <arg name="view_image" value="false"/>
     </include>
-    <include file="$(find realsense2_camera)/launch/rs_camera.launch" />
 
-    arg name="robot_name" default="/"/>
+    <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+    <arg name ="align_depth" value="true"/>
+    </include>
+
+    <arg name="robot_name" default="/"/>
     <arg name="rviz"       default="false"/>
 
     <arg if="$(eval arg('robot_name') == '/')"  name="frame_prefix" value="" />
     <arg unless="$(eval arg('robot_name') == '/')" name="frame_prefix" value="$(arg robot_name)/" />
 
-    <!-- TODO: do we need group -->
-    <group ns="$(arg robot_name)">
+    TODO: do we need group
+    <!-- <group ns="$(arg robot_name)"> -->
         <!-- Map server -->
-        <arg name="map_file" default="$(find fire_detector)/maps/RPL_lab_test.yaml"/>
+        <!-- <arg name="map_file" default="$(find fire_detector)/maps/RPL_lab_test.yaml"/> -->
         <!--<arg name="map_file" default="$(find fire_detector)/maps/map.yaml"/> -->
-        <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)" >
+        <!-- <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)" >
             <param name="frame_id" value="$(arg frame_prefix)map" />
-        </node>
+        </node> -->
     
         <!-- Calls navigation stack -->
-        <include file="$(find fire_detector)/launch/include/move_base.launch">
+        <!-- <include file="$(find fire_detector)/launch/include/move_base.launch">
             <arg name="frame_prefix" value="$(arg frame_prefix)"/>
             <arg name="robot_name"   value="$(arg robot_name)"/>
-        </include>
+        </include> -->
 
-    </group>
+    <!-- </group> -->
 
 </launch>

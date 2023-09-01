@@ -5,7 +5,7 @@
 #include <sensor_msgs/Image.h>
 #include <ctime>
 #include <chrono>
-#include "darknet_ros_msgs/BoundingBoxes.h"
+#include "detection_msgs/BoundingBoxes.h"
 
 
 class fire_detector{
@@ -25,7 +25,7 @@ class fire_detector{
 
         void detectionCallback(const sensor_msgs::Image::ConstPtr &msg);
 
-        void boundingBoxCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr &msg);
+        void boundingBoxCallback(const detection_msgs::BoundingBoxes::ConstPtr &msg);
 
         float calculateFrequency(std::chrono::steady_clock::time_point previous_time, std::chrono::steady_clock::time_point current_time);
         

@@ -30,16 +30,15 @@ void fire_detector::detectionCallback(const sensor_msgs::Image::ConstPtr &msg){
 
 }
 
-void fire_detector::boundingBoxCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr &msg)
+void fire_detector::boundingBoxCallback(const detection_msgs::BoundingBoxes::ConstPtr &msg)
 {
-    for (darknet_ros_msgs::BoundingBox box : msg->bounding_boxes){
+    for (detection_msgs::BoundingBox box : msg->bounding_boxes){
         std::string objClass = box.Class;
         if(objClass == "Fire_Extinguisher" ){
             float d = box.depth;
             ROS_INFO("Depth: %f", d);
         }
         
-
     }
     
 }
