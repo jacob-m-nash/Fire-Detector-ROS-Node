@@ -10,14 +10,14 @@ int main(int argc, char **argv){
   // create an instance of the fire_detector node
   fire_detector fire_detector(nh);
 
-  fire_detector_nav fire_detector_nav(nh);
+  //fire_detector_nav fire_detector_nav(nh);
 
   // loop rate in Hz
   ros::Rate rate(60);
 
   while (ros::ok()) {
 
-    fire_detector_nav.navToPoint(10,10);
+    //fire_detector_nav.navToPoint(10,10);
     // spin and process all pending callbacks
     ros::spinOnce();
 

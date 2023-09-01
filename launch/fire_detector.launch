@@ -8,33 +8,13 @@
 <!-- <node pkg="usb_cam" name="usb_cam" type="usb_cam_node" output="screen" /> -->
     
   
-
-    <node pkg="yolov7_ros" type="detect_ros.py" name="detect" output="screen"
-    ns="yolov7">
-        <!-- path to tourch weights file -->
-        <param name="weights_path" type="str"
-        value="$(find fire_detector)/weights/Fire-Detector-yolov7.pt"/>
-      
-        <!-- Path to a class labels file -->
-        <param name="classes_path" type="str" value="$(find fire_detector)/class_labels/fire-detector.txt" />
-        <!-- topic name to subscribe to -->
-        <param name="img_topic" type="str" value="/camera/rgb/image_raw" />
-        <!-- topic name for the detection output -->
-        <param name="out_topic" type="str" value="yolov7" />
-        <!-- confidence threshold -->
-        <param name="conf_thresh" type="double" value="0.60" />
-        <!-- intersection over union threshold -->
-        <param name="iou_thresh" type="double" value="0.45" />
-        <!-- queue size for publishing -->
-        <param name="queue_size" type="int" value="1" />
-        <!-- image size to which to resize each input image before feeding into the
-        network (the final output is rescaled to the original image size) -->
-        <param name="img_size" type="int" value="640" />
-        <!-- flag whether to also publish image with the visualized detections -->
-        <param name="visualize" type="bool" value="true" />
-        <!-- 'cuda' or 'cpu' -->
-        <param name="device" type="str" value="cuda" />
-    </node>
-
+    <include file="$(find yolov5_ros)/launch/yolov5.launch">
+        <arg name="weights" value="$(find fire_detector)/weights/Fire-Detector-yolov5n6.pt" />
+        <arg name="data" value="$(find fire_detector)/class_lables/fire-detector.yaml"/>
+        <arg name="publish_image" value="true"/>
+        <arg name="input_image_topic" value="/camera/color/image_raw"/>
+        <arg name="device" value="cpu"/>
+        <arg name="view_image" value="false"/>
+    </include>
     <include file="$(find realsense2_camera)/launch/rs_camera.launch" />
 </launch>

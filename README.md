@@ -32,6 +32,8 @@ echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
 ```
 source ~/.bashrc
 ```
+## Install yolov5-ros
+https://github.com/mats-robotics/yolov5_ros/tree/main
 ## Install yolov7-ros
 ### Download source from github
 ```bash
