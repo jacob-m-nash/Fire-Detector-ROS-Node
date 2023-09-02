@@ -12,10 +12,10 @@ find_package(catkin REQUIRED COMPONENTS
  std_msgs
  geometry_msgs
 rosbag
- actionlib_msgs
- actionlib
- detection_msgs
-
+actionlib_msgs
+actionlib
+detection_msgs
+tf
 )
 
 ## System dependencies are found with CMake's conventions

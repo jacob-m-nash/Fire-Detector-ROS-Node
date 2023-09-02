@@ -1,33 +1,33 @@
 #include <fire_detector.h>
+#include <tf/transform_broadcaster.h>
+#include<array> //maybe std::
 
 fire_detector::fire_detector(ros::NodeHandle nh){
     nh_ = nh;
     // Initialise ROS Subscribers
-    cam_sub_ = nh_.subscribe("/usb_cam/image_raw",1,&fire_detector::cameraCallback, this);
-    detect_sub_ = nh_.subscribe("/yolov7/yolov7/visualization",1,&fire_detector::detectionCallback,this);
-    detect_sub_2 = nh_.subscribe("/yolov5/detections", 1, &fire_detector::boundingBoxCallback,this);
+    detect_sub_ = nh_.subscribe("/yolov5/detections", 1, &fire_detector::boundingBoxCallback,this);
+    pose_sub_ = nh_.subscribe("/spot/odometry", 1, &fire_detector::spotOdoCallback,this);
 
-    // Define the publishers
-    img_pub_ = nh_.advertise<sensor_msgs::Image>("/camera/rgb/image_raw", 1, true);
-
+  
+    
     last_time_ = std::chrono::steady_clock::now();
     current_time_ = std::chrono::steady_clock::now();
+
 }
 
-void fire_detector::cameraCallback(const sensor_msgs::Image::ConstPtr& msg)
+void fire_detector::spotOdoCallback(const nav_msgs::Odometry::ConstPtr &msg)
 {
-  img_pub_.publish(msg);
+    fire_detector::spotPose = msg->pose.pose;
 }
 
 
-
-void fire_detector::detectionCallback(const sensor_msgs::Image::ConstPtr &msg){
+void fire_detector::detectionCallback(const sensor_msgs::Image::ConstPtr &msg)
+{
     current_time_ = std::chrono::steady_clock::now();
     float htz = calculateFrequency(last_time_,current_time_);
     ROS_INFO("htz %f", htz);
     last_time_ = std::chrono::steady_clock::now();
     return;
-
 }
 
 void fire_detector::boundingBoxCallback(const detection_msgs::BoundingBoxes::ConstPtr &msg)
@@ -35,8 +35,18 @@ void fire_detector::boundingBoxCallback(const detection_msgs::BoundingBoxes::Con
     for (detection_msgs::BoundingBox box : msg->bounding_boxes){
         std::string objClass = box.Class;
         if(objClass == "Fire_Extinguisher" ){
-            float d = box.depth;
-            ROS_INFO("Depth: %f", d);
+            double d = box.depth;
+            double x = (double)box.centerX;
+            double y =(double) box.centerY;
+            ROS_INFO("detect: %s", objClass.c_str());
+            double result[3];
+            double matrix[3][4] = { //TODO: remove hard coded P matrix 
+                {922.5476684570312, 0.0, 653.406982421875, 0.0},
+                { 0.0, 922.5319213867188, 360.19708251953125, 0.0},
+                {0.0, 0.0, 1.0, 0.0}
+            };
+            double vector[3] = {x, y, d};
+            matrixVectorMultiply(matrix, vector, result);
         }
         
     }
@@ -49,4 +59,13 @@ float fire_detector::calculateFrequency(std::chrono::steady_clock::time_point pr
     double nseconds = double(time_span.count()) * std::chrono::steady_clock::steady_clock::period::num / std::chrono::steady_clock::steady_clock::period::den;
     float htz = 1/nseconds;
     return htz;
+}
+
+void fire_detector::matrixVectorMultiply(const double matrix[3][4], const double vector[3], double result[3]) {
+    for (int i = 0; i < 3; ++i) {
+        result[i] = 0.0;
+        for (int j = 0; j < 4; ++j) {
+            result[i] += matrix[i][j] * vector[j];
+        }
+    }
 }
