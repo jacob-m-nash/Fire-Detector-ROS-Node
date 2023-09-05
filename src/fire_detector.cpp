@@ -3,9 +3,9 @@
 #include <tf/transform_listener.h>
 #include<array>//todo maybe remove??
 #include <geometry_msgs/PoseStamped.h>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+//#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
-#include <tf2_ros/transform_listener.h>
+//#include <tf2_ros/transform_listener.h>
 
 fire_detector::fire_detector(ros::NodeHandle nh){
     nh_ = nh;
@@ -17,6 +17,7 @@ fire_detector::fire_detector(ros::NodeHandle nh){
     
     last_time_ = std::chrono::steady_clock::now();
     current_time_ = std::chrono::steady_clock::now();
+    
 
 }
 
@@ -64,8 +65,8 @@ void fire_detector::boundingBoxCallback(const detection_msgs::BoundingBoxes::Con
             output_msg.pose.position.y = realworld_y;
             output_msg.pose.position.z = realworld_z;
             tf::StampedTransform transform;
-            tf::TransformListener listener;
-            listener.lookupTransform("camera", "body",ros::Time(0), transform);
+            
+            fire_detector::listener.lookupTransform("/camera", "/body",ros::Time(0), transform);
             //base_link_to_leap_motion = tf_buffer.lookupTransform("camera", "body", ros::Time::now(), ros::Duration(1.0) );
             //tf2::doTransform(output_msg.pose, output_msg.pose, base_link_to_leap_motion);
         }
