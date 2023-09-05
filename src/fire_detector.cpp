@@ -21,12 +21,6 @@ fire_detector::fire_detector(ros::NodeHandle nh){
 
 }
 
-void fire_detector::spotOdoCallback(const nav_msgs::Odometry::ConstPtr &msg)
-{
-    fire_detector::spotPose = msg->pose.pose;
-}
-
-
 void fire_detector::detectionCallback(const sensor_msgs::Image::ConstPtr &msg)
 {
     current_time_ = std::chrono::steady_clock::now();
@@ -56,30 +50,30 @@ void fire_detector::boundingBoxCallback(const detection_msgs::BoundingBoxes::Con
             float cx = camera_matrix[0][2];
             float cy = camera_matrix[1][2];
 
-            float realworld_x = d; 
-            float realworld_y = -(x - cx) * d * inv_fx; 
-            float realworld_z = -(y - cy) * d * inv_fy;
-            ROS_INFO("x %f y %f z %f", realworld_x,realworld_y, realworld_z);
-            geometry_msgs::PoseStamped output_msg;
-            output_msg.pose.position.x = realworld_x;
-            output_msg.pose.position.y = realworld_y;
-            output_msg.pose.position.z = realworld_z;
-            tf::StampedTransform transform;
+            float projected_x = d; 
+            float projected_y = -(x - cx) * d * inv_fx; 
+            float projected_z = -(y - cy) * d * inv_fy;
+            ROS_INFO("x %f y %f z %f", projected_x,projected_y, projected_z);
+
+            geometry_msgs::PointStamped camera_point;
+            camera_point.header.frame_id = "camera";
+         
+
+            camera_point.header.stamp = ros::Time();
+         
             
-            fire_detector::listener.lookupTransform("/camera", "/body",ros::Time(0), transform);
-            //base_link_to_leap_motion = tf_buffer.lookupTransform("camera", "body", ros::Time::now(), ros::Duration(1.0) );
-            //tf2::doTransform(output_msg.pose, output_msg.pose, base_link_to_leap_motion);
+            camera_point.point.x = projected_x;
+            camera_point.point.y = projected_y;
+            camera_point.point.z = projected_z;
+    
+            geometry_msgs::PointStamped map_point;
+            listener.transformPoint("map", laser_point, map_point);
+
+            ROS_INFO("New x %f y %f z %f", map_point.point.x  ,map_point.point.y, map_point.point.z);
         }
         
     }
     
 }
 
-float fire_detector::calculateFrequency(std::chrono::steady_clock::time_point previous_time, std::chrono::steady_clock::time_point current_time)
-{
-    std::chrono::steady_clock::duration time_span = current_time - previous_time;
-    double nseconds = double(time_span.count()) * std::chrono::steady_clock::steady_clock::period::num / std::chrono::steady_clock::steady_clock::period::den;
-    float htz = 1/nseconds;
-    return htz;
-}
 

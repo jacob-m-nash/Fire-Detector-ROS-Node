@@ -1,7 +1,5 @@
 #include <fire_detector.h>
 #include <fire_detector_nav.h>
-#include <tf/transform_broadcaster.h>
-#include <tf2/LinearMath/Quaternion.h>
 #include <math.h>
 
 int main(int argc, char **argv){
@@ -14,8 +12,8 @@ int main(int argc, char **argv){
   
 
   // add camera frame
-  tf::TransformBroadcaster br;
-  tf::Transform transform;
+  // tf::TransformBroadcaster br;
+  // tf::Transform transform;
 
   fire_detector_nav fire_detector_nav(nh);
 
@@ -24,15 +22,6 @@ int main(int argc, char **argv){
 
   while (ros::ok()) {
 
-    // transform.setOrigin( tf::Vector3(0.120, -0.080, 0.125) );
-
-    // static tf2::Quaternion myQuaternion;
-    // myQuaternion.setRPY(0, 0, - 0.5 * M_PI);
-    // transform.setRotation( tf::Quaternion(myQuaternion.getX(), myQuaternion.getY(), myQuaternion.getZ(), myQuaternion.getW()) );
-    // br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "body", "camera"));
-
-    //fire_detector_nav.navToPoint(10,10);
-    // spin and process all pending callbacks
     ros::spinOnce();
 
     // sleep to fulfill the loop rate
