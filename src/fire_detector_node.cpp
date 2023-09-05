@@ -24,7 +24,7 @@ int main(int argc, char **argv){
 
   while (ros::ok()) {
 
-    transform.setOrigin( tf::Vector3(0.0, 2.0, 0.0) );
+    transform.setOrigin( tf::Vector3(0.120, -0.80, 0.125) );
 
     static tf2::Quaternion myQuaternion;
     myQuaternion.setRPY(0, 0, 0.25 * M_PI);
