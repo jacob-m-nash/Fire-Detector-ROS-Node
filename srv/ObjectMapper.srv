@@ -1,0 +1,8 @@
+#request constants
+
+geometry_msgs/Pose object_locations[]
+string map_path
+---
+#response constants
+string image_path
+bool res
