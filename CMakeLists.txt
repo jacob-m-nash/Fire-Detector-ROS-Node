@@ -11,6 +11,12 @@ find_package(catkin REQUIRED COMPONENTS
  roscpp
  std_msgs
  geometry_msgs
+rosbag
+actionlib_msgs
+actionlib
+detection_msgs
+tf
+message_generation
 )
 
 ## System dependencies are found with CMake's conventions
@@ -54,24 +60,25 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+add_service_files(
+  FILES
+  ObjectMapper.srv
+)
 
-## Generate actions in the 'action' folder
-# add_action_files(
-#   FILES
-#   Action1.action
-#   Action2.action
-# )
+# Generate actions in the 'action' folder
+add_action_files(
+  DIRECTORY action
+  FILES FireDetectorNav.action
+)
 
-## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-# )
+# Generate added messages and services with any dependencies listed here
+generate_messages(
+  DEPENDENCIES
+  std_msgs  # Or other packages containing msgs
+  geometry_msgs
+  actionlib_msgs
+
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -107,6 +114,9 @@ catkin_package(
 #  LIBRARIES fire_detector
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
+  CATKIN_DEPENDS
+    rosbag
+    actionlib_msgs
 )
 
 ###########
@@ -118,11 +128,13 @@ catkin_package(
 include_directories(
  include
  ${catkin_INCLUDE_DIRS}
+ ${Boost_LIBRARIES}
 )
 
 #Declare a C++ library
 add_library(${PROJECT_NAME}_fd_class_lib
- src/fire_detector.cpp
+ src/fire_detector_projector.cpp
+ src/fire_detector_nav.cpp
 )
 
 ## Add cmake target dependencies of the library
@@ -134,6 +146,8 @@ add_dependencies(${PROJECT_NAME}_fd_class_lib ${${PROJECT_NAME}_EXPORTED_TARGETS
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME}_node src/fire_detector_node.cpp)
+
+
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -149,6 +163,8 @@ add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catk
 target_link_libraries(${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
   ${PROJECT_NAME}_fd_class_lib
+  ${rosbag_LIBRARIES}
+
 )
 
 #############
@@ -160,10 +176,10 @@ target_link_libraries(${PROJECT_NAME}_node
 
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
-# catkin_install_python(PROGRAMS
-#   scripts/my_python_script
-#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+catkin_install_python(PROGRAMS 
+  src/fire_detector_mapper.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html

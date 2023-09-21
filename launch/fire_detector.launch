@@ -3,41 +3,51 @@
         name="fire_detector_node"
         type="fire_detector_node"
         output="screen"
-  />
-<node pkg="usb_cam" 
-      name="usb_cam" 
-      type="usb_cam_node" 
-      output="screen" 
-   />
+  >
+</node>
+<!-- <node pkg="usb_cam" name="usb_cam" type="usb_cam_node" output="screen" /> -->
+    
+  
+    <include file="$(find yolov5_ros)/launch/yolov5.launch">
+        <arg name="weights" value="$(find fire_detector)/weights/Fire-Detector-yolov5n6.pt" />
+        <arg name="data" value="$(find fire_detector)/class_lables/fire-detector.yaml"/>
+        <arg name="publish_image" value="true"/>
+        <arg name="input_image_topic" value="/camera/color/image_raw"/>
+        <arg name="input_depth_topic" value="/camera/aligned_depth_to_color/image_raw"/>
+        <arg name="device" value="cpu"/>
+        <arg name="view_image" value="false"/>
+    </include>
 
+    <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+    <arg name ="align_depth" value="true"/>
+    </include>
 
-    <node pkg="yolov7_ros" type="detect_ros.py" name="detect" output="screen"
-    ns="yolov7">
-        <!-- path to tourch weights file -->
-        <!-- TODO: relative path -->
-        <param name="weights_path" type="str"
-        value="/home/jacob/catkin_workspace/src/Fire-Detector-ROS-Node/weights/Fire-Detector-yolov7.pt"/>
-      
-        <!-- Path to a class labels file -->
-        <!-- TODO: relative path -->
-        <param name="classes_path" type="str" value="/home/jacob/catkin_workspace/src/yolov7-ros/class_labels/fire-detector.txt" />
-        <!-- topic name to subscribe to -->
-        <param name="img_topic" type="str" value="/camera/rgb/image_raw" />
-        <!-- topic name for the detection output -->
-        <param name="out_topic" type="str" value="yolov7" />
-        <!-- confidence threshold -->
-        <param name="conf_thresh" type="double" value="0.35" />
-        <!-- intersection over union threshold -->
-        <param name="iou_thresh" type="double" value="0.45" />
-        <!-- queue size for publishing -->
-        <param name="queue_size" type="int" value="1" />
-        <!-- image size to which to resize each input image before feeding into the
-        network (the final output is rescaled to the original image size) -->
-        <param name="img_size" type="int" value="640" />
-        <!-- flag whether to also publish image with the visualized detections -->
-        <param name="visualize" type="bool" value="true" />
-        <!-- 'cuda' or 'cpu' -->
-        <param name="device" type="str" value="cuda" />
-    </node>
+    <arg name="robot_name" default="/"/>
+    <arg name="rviz"       default="false"/>
+
+    <arg if="$(eval arg('robot_name') == '/')"  name="frame_prefix" value="" />
+    <arg unless="$(eval arg('robot_name') == '/')" name="frame_prefix" value="$(arg robot_name)/" />
+
+    TODO: do we need group
+    <group ns="$(arg robot_name)">
+        <!-- Map server -->
+        <arg name="map_file" default="$(find fire_detector)/maps/final_map_test.yaml"/>
+        <!-- <arg name="map_file" default="$(find fire_detector)/maps/RPL_lab_test_area.yaml"/> -->
+        <!-- <arg name="map_file" default="$(find fire_detector)/maps/map.yaml"/> -->
+        <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)" >
+            <param name="frame_id" value="$(arg frame_prefix)map" />
+        </node>
+    
+        <!-- Calls navigation stack -->
+        <include file="$(find fire_detector)/launch/include/move_base.launch">
+            <arg name="frame_prefix" value="$(arg frame_prefix)"/>
+            <arg name="robot_name"   value="$(arg robot_name)"/>
+        </include>
+
+     </group>
+
+    <!-- <node pkg="phasespace" name="phasespace_node" type="phasespace_node" args="192.168.1.16 robot_spot.json 1"> </node> -->
+    <node pkg="tf" type="static_transform_publisher" name="phasespace_offset" args="0 0 -0.085 1.57079632679 0 0  /robot_tracker /body 100"/>
+    <node pkg="tf" type="static_transform_publisher" name="camera_offset" args="0.120 -0.080 0.125 -0 0 1.57079632679 body camera 100"/>
 
 </launch>
