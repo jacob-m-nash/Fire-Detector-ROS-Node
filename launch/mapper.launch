@@ -1,0 +1,15 @@
+<launch>
+<node pkg="fire_detector"
+        name="fire_detector_mapper"
+        type="fire_detector_mapper.py"
+        output="screen">
+</node>
+<node pkg="fire_detector"
+        name="fire_detector_node"
+        type="fire_detector_node"
+        output="screen"
+  >
+
+
+</node>
+</launch>

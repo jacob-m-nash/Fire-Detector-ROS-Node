@@ -16,6 +16,7 @@ actionlib_msgs
 actionlib
 detection_msgs
 tf
+message_generation
 )
 
 ## System dependencies are found with CMake's conventions
@@ -59,24 +60,25 @@ tf
 # )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+add_service_files(
+  FILES
+  ObjectMapper.srv
+)
 
-## Generate actions in the 'action' folder
-# add_action_files(
-#   FILES
-#   Action1.action
-#   Action2.action
-# )
+# Generate actions in the 'action' folder
+add_action_files(
+  DIRECTORY action
+  FILES FireDetectorNav.action
+)
 
-## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-# )
+# Generate added messages and services with any dependencies listed here
+generate_messages(
+  DEPENDENCIES
+  std_msgs  # Or other packages containing msgs
+  geometry_msgs
+  actionlib_msgs
+
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -114,6 +116,7 @@ catkin_package(
 #  DEPENDS system_lib
   CATKIN_DEPENDS
     rosbag
+    actionlib_msgs
 )
 
 ###########
@@ -130,7 +133,7 @@ include_directories(
 
 #Declare a C++ library
 add_library(${PROJECT_NAME}_fd_class_lib
- src/fire_detector.cpp
+ src/fire_detector_projector.cpp
  src/fire_detector_nav.cpp
 )
 
@@ -146,8 +149,6 @@ add_executable(${PROJECT_NAME}_node src/fire_detector_node.cpp)
 
 
 
-add_executable(${PROJECT_NAME}_tf_node src/fire_detector_tf_node.cpp )
-
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -157,17 +158,9 @@ add_executable(${PROJECT_NAME}_tf_node src/fire_detector_tf_node.cpp )
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(${PROJECT_NAME}_tf_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_node
-  ${catkin_LIBRARIES}
-  ${PROJECT_NAME}_fd_class_lib
-  ${rosbag_LIBRARIES}
-
-)
-
-target_link_libraries(${PROJECT_NAME}_tf_node
   ${catkin_LIBRARIES}
   ${PROJECT_NAME}_fd_class_lib
   ${rosbag_LIBRARIES}

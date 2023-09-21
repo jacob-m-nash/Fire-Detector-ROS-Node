@@ -1,17 +1,24 @@
-#ifndef FIRE_DETECTOR_NAV_H
-#define FIRE_DETECTOR_NAV_H
+#ifndef MOVE_BASE_LIST_ACTION_SERVER_H_
+#define MOVE_BASE_LIST_ACTION_SERVER_H_
 
 #include <ros/ros.h>
+#include <actionlib/server/simple_action_server.h>
 #include <move_base_msgs/MoveBaseAction.h>
-#include <actionlib/client/simple_action_client.h>
+#include <your_package_name/FireDetectorNavAction.h>  // Replace 'your_package_name' with the actual package name
+#include <geometry_msgs/PoseStamped.h>
 
+class FireDetectorNavAction {
+protected:
+  ros::NodeHandle nh_;
+  actionlib::SimpleActionServer<your_package_name::FireDetectorNavAction> as_;
+  std::string action_name_;
+  your_package_name::MoveBaseListFeedback feedback_;
+  your_package_name::MoveBaseListResult result_;
+  actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> move_base_client_;
 
-typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
-class fire_detector_nav{
-    public:
-        fire_detector_nav(ros::NodeHandle nh);
-        ros::NodeHandle nh_;
-        void navToPoint(float x, float y);
-
+public:
+  FireDetectorNavAction(std::string name);
+  void executeCB(const your_package_name::FireDetectorNavGoalConstPtr &goal);
 };
-#endif
+
+#endif // MOVE_BASE_LIST_ACTION_SERVER_H_

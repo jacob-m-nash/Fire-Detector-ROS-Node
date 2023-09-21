@@ -1,30 +1,42 @@
 #include "fire_detector_nav.h"
-#include <actionlib/client/simple_action_client.h>
-#include <move_base_msgs/MoveBaseAction.h>
 
-typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
-
-fire_detector_nav::fire_detector_nav(ros::NodeHandle nh)
-{
-    nh_ = nh;    
+FireDetectorNavAction::FireDetectorNavAction(std::string name)
+: as_(nh_, name, boost::bind(&FireDetectorNavAction::executeCB, this, _1), false),
+  action_name_(name),
+  move_base_client_("move_base", true) {
+  as_.start();
 }
 
-void fire_detector_nav::navToPoint(float x, float y)
-{
-    //TODO:  move base server name 
-    //TODO:  launch move base from fire node
-    MoveBaseClient moveBaseClient_("move_base", true);
-    while (!moveBaseClient_.waitForServer(ros::Duration(5.0)))
-    {
-        ROS_INFO("Waiting for move_base server to start");
+void FireDetectorNavAction::executeCB(const your_package_name::FireDetectorNavGoalConstPtr &goal) {
+  bool success = true;
+  move_base_msgs::MoveBaseGoal move_base_goal;
+
+  for (size_t i = 0; i < goal->pose_list.size(); ++i) {
+    if (as_.isPreemptRequested() || !ros::ok()) {
+      as_.setPreempted();
+      success = false;
+      break;
     }
-    move_base_msgs::MoveBaseGoal goal;
-    goal.target_pose.header.frame_id = "base_link"; //TODO is this the right link?
-    goal.target_pose.header.stamp = ros::Time::now();
-    goal.target_pose.pose.position.x = x;
-    goal.target_pose.pose.position.y = 1.0;
+    
+    move_base_goal.target_pose = goal->pose_list[i];
+    move_base_client_.sendGoal(move_base_goal);
+    move_base_client_.waitForResult();
+    
+    if (move_base_client_.getState() == actionlib::SimpleClientGoalState::SUCCEEDED) {
+      feedback_.current_index = i;
+      as_.publishFeedback(feedback_);
+    } else {
+      success = false;
+      break;
+    }
+  }
 
-    moveBaseClient_.sendGoal(goal);
-    moveBaseClient_.waitForResult();
-
+  if (success) {
+    result_.status = "All goals reached successfully";
+    as_.setSucceeded(result_);
+  } else {
+    result_.status = "Failed to reach one or more goals";
+    as_.setAborted(result_);
+  }
 }
+

@@ -1,6 +1,6 @@
 #request constants
 
-geometry_msgs/Pose object_locations[]
+geometry_msgs/PoseStamped[]  object_locations
 string map_path
 ---
 #response constants
